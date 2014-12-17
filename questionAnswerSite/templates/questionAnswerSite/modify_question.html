@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <form id='add-review' role='form' method='POST' action='/modify_question_act'>
+    	{% csrf_token %}
+    	<div class='container-fluid'>
+	    	<div class='form-group col-lg-12'>
+	    		<label for="title">Modify Title: </label>
+	    		 <input type="hidden" name="identifier" value="{{ question.identifier }}">
+	    		<input type="text" class="form-control" id="title" name="title" value="{{ question.title }}">
+	  		</div>
+
+	  		<div class='form-group col-lg-12'>
+	  			<label for="title">Modify Description:</label>
+	  			<textarea class="form-control" rows="6" name='description' id='description'>{{question.description }}</textarea>
+	  		</div>
+
+	  		<div class='form-group col-lg-12'>
+	  			<label for="title">Modify Tag:</label>
+	  			<input type="text" class="form-control" rows="6" name='tag' id='tag' value="{{tagStr}}">
+	  		</div>
+
+	    	<div class='form-group col-lg-12'>
+	  			<input type='submit' class='btn btn-primary' value='Submit modification' />
+	  		</div>
+	  	</div>
+    </form>
+{% endblock content %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <div class="jumbotron">
+        <p>
+        	Modified my questions.
+        </p>
+    </div>
+
+    <div class="container-fluid" id='reviews-wrapper'>
+    	{% for question in questions %}
+         <div class='col-lg-12 review-node jumbotron'>
+            <p><b>Title:</b> <span class='title'>{{ question.title|safe }}</span></p>
+            <p><b>Question:</b> <span class='review'>{{ question.description|safe }}</span></p>
+            <p><b>Date Created:</b> <span class='date'>{{ question.createdate }}</span></p>
+            <p><a href='/modify_question/{{ question.identifier }}'>Modify the question.</a></p>
+            <p><a href='/delete_question/{{ question.identifier }}'>Delete {{ question.identifier }}</a></p>
+        </div>
+	   {% endfor %}
+    </div>
+{% endblock content %}

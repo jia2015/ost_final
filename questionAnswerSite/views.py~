@@ -1,0 +1,57 @@
+from django.shortcuts import render
+from questionAnswerSite.models import Review
+from django.shortcuts import redirect
+from google.appengine.ext import db
+from google.appengine.api import users
+
+import datetime
+import logging
+import random
+
+logger = logging.getLogger(__name__)
+
+# Create your views here.
+def home(request):
+	return render(request, "questionAnswerSite/home.html")
+
+
+def about(request):
+	return render(request, "questionAnswerSite/about.html")
+
+def review(request, identifier):
+	reviews = db.GqlQuery("SELECT * FROM Review WHERE identifier = :1", identifier)
+	logging.info("The id is: " + identifier)
+	return render(request, "questionAnswerSite/review.html", {'reviews': reviews})
+
+def reviews(request):
+	user = users.get_current_user()
+    if user:
+	greeting = ('Welcome, %s! (<a href="%s">sign out</a>)' %
+                        (user.nickname(), users.create_logout_url('/reviews/'))
+    else:
+    	greeting = ('<a href="%s">Sign in or register</a>.' %
+                        users.create_login_url('/reviews/'))
+
+        self.response.out.write("<html><body>%s</body></html>" % greeting)
+
+	reviews = db.GqlQuery("SELECT * FROM Review ORDER BY date")
+	return render(request, "questionAnswerSite/reviews.html", {'reviews': reviews})
+
+def add_review(request):
+	user = users.get_current_user()
+	if user:
+		greeting = ('Welcome, %s! (<a href="%s">sign out</a>)' %(user.nickname(), users.create_logout_url('/')))
+	else:
+		greeting = ('<a href="%s">Sign in or register</a>.' %users.create_login_url('/'))
+
+	
+
+	if request.method == 'POST':
+		items = request.POST
+		r = Review(location=items['location'], description=items['review'], title=items['title'], star_rating=int(items['stars']))
+		r.date = datetime.datetime.now().date()
+		r.identifier = str(random.getrandbits(32))
+		r.put()
+		return redirect('/reviews')
+	else:
+		return render(request, 'questionAnswerSite/add_review.html')

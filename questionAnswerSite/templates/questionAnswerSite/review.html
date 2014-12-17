@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+        <div id='view-review' class='col-lg-12 review-node jumbotron'>
+        	<div class='row-fluid'>
+        		<div class='col-lg-12'>
+	            <p><b><span class='title'>{{ question.title }}</span></b>  </p>
+	    	<!-- 			<p><b>Location:</b> <span class='location'>{{ review.location }}</span></p> -->  
+	    		<a href='/vote/{{question.identifier}}-3-Questions'><span class="glyphicon glyphicon-thumbs-up"></a>  <a href='/vote/{{question.identifier}}-1-Questions'><span class="glyphicon glyphicon-thumbs-down"></span></a> {{ question.votes }} 
+	            <br><b>Description: </b>{{ question.description|safe }}
+	            <br><b>Author: </b> {{ question.author }}
+	            <br><b>Created Date: </b> {{ question.createdate }}
+	            <br><b>Last Modification Time: </b>  {{ question.modifydate }}
+
+	           {% for ans in answers %}
+			           <br> <br> <a href='/vote/{{ans.identifier}}-3-Answers'><span class="glyphicon glyphicon-thumbs-up"></a>  <a href='/vote/{{ans.identifier}}-1-Answers'><span class="glyphicon glyphicon-thumbs-down"></span></a>  {{ ans.votes }} 
+			            <br>Answer:{{ ans.title|safe }}
+			            <br>Author:  {{ ans.author }}
+			            <br>Created Time:  {{ ans.createdate }}
+			            <br>Last Modification Time:  {{ ans.modifydate }}
+			    {% endfor %}
+
+			     <br><br><a href='/add_answer_page/{{ question.identifier }}'>Add Answer</a>
+	          </div>
+<!-- 	          <div class='col-lg-6'>
+          	 	<div class='map' id="map-canvas"></div>
+	          </div> -->
+          </div>
+        </div>
+{% endblock content %}
