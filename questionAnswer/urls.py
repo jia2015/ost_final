@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
-
+from django.contrib.syndication.views import Feed
 from django.contrib import admin
+from questionAnswerSite.models import Questions
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -12,6 +13,8 @@ urlpatterns = patterns('',
     url(r'^reviews/(?P<count>\w{0,256})$', 'questionAnswerSite.views.reviews', name='reviews'),
     url(r'^reviews/', 'questionAnswerSite.views.reviews', name='reviews'),
     url(r'^my_question/', 'questionAnswerSite.views.my_question', name='my_question'),
+
+    url(r'^my_answers/', 'questionAnswerSite.views.my_answers', name='my_answers'),
   #  url(r'^answer/add', 'questionAnswerSite.views.add_answer', name='add_answer'),
 
     url(r'^modify_question/(?P<identifier>\w{0,256})/$', 'questionAnswerSite.views.modify_question', name='modify_question'),
@@ -20,6 +23,10 @@ urlpatterns = patterns('',
     
     url(r'^add_answer_page/(?P<identifier>\w{0,256})/$', 'questionAnswerSite.views.add_answer_page', name='add_answer_page'),
     url(r'^add_answer/(?P<identifier>\w{0,256})/$', 'questionAnswerSite.views.add_answer', name='add_answer'),
+
+    url(r'^modify_answer/(?P<identifier>\w{0,256})/$', 'questionAnswerSite.views.modify_answer', name='modify_answer'),
+    url(r'^modify_answer_act', 'questionAnswerSite.views.modify_answer_act', name='modify_answer_act'),
+    url(r'^delete_answer/(?P<identifier>\w{0,256})/$', 'questionAnswerSite.views.delete_answer', name='delete_answer'),
     
     url(r'^vote/(?P<identifier>\w{0,256})-(?P<voteVal>\w{0,1})-(?P<type>\w.+)$', 'questionAnswerSite.views.vote', name='vote'),
 
@@ -28,6 +35,7 @@ urlpatterns = patterns('',
 
     url(r'^list_all_img/', 'questionAnswerSite.views.list_all_img', name='list_all_img'),
 
+    url(r'^feed/', "questionAnswerSite.views.index", name='index')
 
-    url(r'^admin/', include(admin.site.urls)),
+    #url(r'^admin/', include(admin.site.urls)),
 )

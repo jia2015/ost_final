@@ -45,6 +45,8 @@ class Answers(db.Model):
 	createdate= db.DateTimeProperty()
 	modifydate= db.DateTimeProperty()
 	votes = db.IntegerProperty(default=0)
+	question_ = db.StringProperty(multiline=True)
+	question_id= db.StringProperty()
 
 
 class Votes(db.Model):

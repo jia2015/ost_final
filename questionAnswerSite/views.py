@@ -8,6 +8,8 @@ from django.shortcuts import redirect
 from google.appengine.ext import db
 from google.appengine.api import users
 
+from django.utils import feedgenerator
+
 
 from google.appengine.ext import blobstore
 
@@ -40,29 +42,37 @@ def question(request, identifier):
 	question = db.get(myKey)
 	logging.info("The id is: " + identifier)
 
-	answers_gb = Answers.all()
-	answers = answers_gb.ancestor(question)
+	# answers_gb = Answers.all()
+	# answers = answers_gb.ancestor(question)
 
 
-	question.description=convertToHtmlAndImage(question.description)
-	question.title=convertToHtmlAndImage(question.title)
+	# question.description=convertToHtmlAndImage(question.description)
+	# question.title=convertToHtmlAndImage(question.title)
+
+	# for ans in answers:
+	# 	ans.title=convertToHtmlAndImage(ans.title)
+	# 	ans.description=convertToHtmlAndImage(ans.description)
+	# 	ans.put()
+	
+	# answers_gb = Answers.all()
+	# answers = answers_gb.ancestor(question)
+
+	answers = db.GqlQuery("SELECT * FROM Answers ORDER BY votes DESC")
 
 	for ans in answers:
 		ans.title=convertToHtmlAndImage(ans.title)
 		ans.description=convertToHtmlAndImage(ans.description)
-		ans.put
-	
-
+		ans.put()
 
 	return render(request, "questionAnswerSite/review.html", {'question': question,'answers':answers})
 
 def reviews(request,count):
-	user = users.get_current_user()
-	if user:
-		a='aaa'
-		#return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
-	else:
-		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
+	# user = users.get_current_user()
+	# if user:
+	# 	a='aaa'
+	# 	#return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
+	# else:
+	# 	return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
 
 	if request.method == 'POST':
 		items = request.POST
@@ -157,6 +167,68 @@ def my_question(request):
 
 	return render(request, "questionAnswerSite/myquestions.html", {'questions': questions})
 
+
+def my_answers(request):
+	user = users.get_current_user()
+	if user:
+		a='aaa'
+		#return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
+	else:
+		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/myquestions/') })
+
+	answers = db.Query(Answers)
+	answers.filter("author =", user)
+
+	return render(request, "questionAnswerSite/myanswers.html", {'answers': answers})
+
+
+def delete_answer(request,identifier):
+	user = users.get_current_user()
+	if user:
+		a='aaa'
+	else:
+		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
+	myKey = db.Key.from_path('Answers', identifier)
+	db.delete(myKey)
+
+	#return render(request, "questionAnswerSite/test.html", {'field': identifier})
+	return redirect('/my_question')
+
+def modify_answer(request,identifier):
+	user = users.get_current_user()
+	if user:
+		a='aaa'
+	else:
+		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
+	answers = db.Query(Answers)
+	answers.filter("identifier =", identifier)
+
+	logging.info("The id is: " + identifier)
+	return render(request, "questionAnswerSite/modify_answer.html", {'answers': answers})
+
+
+
+def modify_answer_act(request):
+	user = users.get_current_user()
+	if user:
+		a='aaa'
+		#return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
+	else:
+		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/myquestions/') })
+
+	if request.method == 'POST':
+		items = request.POST
+		idVal=items['identifier']
+		answers = db.Query(Answers)
+		answers.filter("identifier =", idVal)
+		logging.info("The id is: " + idVal)
+		for answer in answers:
+			answer.modifydate= datetime.datetime.now()
+			answer.title=items['title']
+			answer.description=items['description']
+			answer.put()
+
+	return redirect('/my_answers')
 
 
 def modify_question(request,identifier):
@@ -266,6 +338,8 @@ def add_answer(request,identifier):
 		r.createdate = datetime.datetime.now()
 		r.modifydate= datetime.datetime.now()
 		r.identifier=keyVal
+		r.question_=question.description
+		r.question_id=question.identifier
 		r.author=user
 		r.put()
 	return redirect('/reviews')
@@ -349,3 +423,45 @@ def delete_img(request,blobKey):
 	mypictures = db.Query(Pictures)
 	mypictures.filter("author =", user.email())
 	return render(request,'questionAnswerSite/list_img.html', { 'mypictures':mypictures })
+
+
+def index(request):
+	context = {}
+	# create a feed generator having a channel with following title, link and description
+	feed = feedgenerator.Rss201rev2Feed(
+		title=u"Runnable",
+		link=u"shaoxinx@gmail.com",
+		description=u"This is final project for open source tool",
+		language=u"en",
+	)
+
+	questions = db.GqlQuery("SELECT * FROM Questions")
+	for question in questions:
+		feed.add_item(
+			title=question.title,
+			description=question.description,
+			createdate=question.createdate,
+			modifydate=question.modifydate
+		)
+	
+	answers = db.Query(Answers)
+	for answer in answers:
+		feed.add_item(
+			title=question.title,
+			description=answer.description,
+			createdate=answer.createdate,
+			modifydate=answer.modifydate
+		)
+
+
+	# Write all the feeds in a string
+	str = feed.writeString('utf-8')
+	# You can use following to write the same in a file
+	#with open('test.rss', 'w') as fp:
+	#	feed.write(fp, 'utf-8')
+	
+	# format the string so that it will be readable
+	str = format(str)
+	context['str'] = str
+	
+	return render(request, 'questionAnswerSite/index.html', context)
