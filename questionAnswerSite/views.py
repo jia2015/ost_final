@@ -1,3 +1,7 @@
+# This is a Final project for open source tool.
+# Shaoxin xu
+# Remove Feed.
+
 from django.shortcuts import render
 from questionAnswerSite.models import Questions
 from questionAnswerSite.models import Answers
@@ -20,7 +24,7 @@ import random
 
 logger = logging.getLogger(__name__)
 
-# Create your views here.
+
 def home(request):
 	return render(request, "questionAnswerSite/home.html")
 
@@ -31,8 +35,9 @@ def about(request):
 
 def convertToHtmlAndImage(input):
 	try:
-		output= re.compile(r'(http(s)?://\S*[^(.jpg)(.png)(.gif)](\s|$))').sub(r'<a href="\1">\1</a>',input)
-		output=re.compile(r'(http://\S*[(.jpg)(.png)(.gif)](\s|$))').sub(r'<img src="\1" style="width:304px;height:228px">', output)
+		output= re.compile(r'(http(s)?://\S*[^(upload/serve)]\S*[^(.jpg)(.png)(.gif)](\s|$))').sub(r'<a href="\1">\1</a>',input)
+		output=re.compile(r'(http://\S*[(.jpg)(.png)(.gif)](\s|$))').sub(r'<img src="\1" style="width:60px;height:60px">', output)
+
 	except:
 		return input
 	return output
@@ -42,37 +47,20 @@ def question(request, identifier):
 	question = db.get(myKey)
 	logging.info("The id is: " + identifier)
 
-	# answers_gb = Answers.all()
-	# answers = answers_gb.ancestor(question)
+	answers_gb = Answers.all()
+	answers = answers_gb.ancestor(question)
 
 
-	# question.description=convertToHtmlAndImage(question.description)
-	# question.title=convertToHtmlAndImage(question.title)
 
-	# for ans in answers:
-	# 	ans.title=convertToHtmlAndImage(ans.title)
-	# 	ans.description=convertToHtmlAndImage(ans.description)
-	# 	ans.put()
-	
-	# answers_gb = Answers.all()
-	# answers = answers_gb.ancestor(question)
-
-	answers = db.GqlQuery("SELECT * FROM Answers ORDER BY votes DESC")
-
-	for ans in answers:
-		ans.title=convertToHtmlAndImage(ans.title)
-		ans.description=convertToHtmlAndImage(ans.description)
-		ans.put()
+	answers = db.GqlQuery("SELECT * FROM Answers WHERE question_id=:1 ORDER BY votes DESC",identifier)#+" ORDER BY votes DESC")
 
 	return render(request, "questionAnswerSite/review.html", {'question': question,'answers':answers})
 
 def reviews(request,count):
-	# user = users.get_current_user()
-	# if user:
-	# 	a='aaa'
-	# 	#return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
-	# else:
-	# 	return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
+	user = users.get_current_user()
+	logoutLink=''
+	if user:
+		logoutLink="<a href="+users.create_logout_url('/')+">sign out</a>" 
 
 	if request.method == 'POST':
 		items = request.POST
@@ -96,7 +84,7 @@ def reviews(request,count):
 	offset=int(count);
 	count=int(count)+10;
 	questions = db.GqlQuery("SELECT * FROM Questions ORDER BY modifydate DESC LIMIT 10 OFFSET "+str(offset))
-	return render(request, "questionAnswerSite/reviews.html", {'next':str(count),'tag_names':tag_names,'questions': questions})
+	return render(request, "questionAnswerSite/reviews.html", {'logoutLink':logoutLink,'next':str(count),'tag_names':tag_names,'questions': questions})
 
 def add_review(request):
 	user = users.get_current_user()
@@ -112,8 +100,10 @@ def add_review(request):
 		keyVal=str(random.getrandbits(32))
 		r = Questions(key_name=keyVal)
 		#r = Questions(description=items['review'], title=items['title'], star_rating=0)
-		r.title=items['title']
-		r.description=items['description']
+
+		r.description=convertToHtmlAndImage(items['description'])
+		r.title=convertToHtmlAndImage(items['title'])
+
 		r.createdate = datetime.datetime.now()
 		r.modifydate= datetime.datetime.now()
 		r.identifier=keyVal
@@ -132,30 +122,10 @@ def add_review(request):
 		return render(request, 'questionAnswerSite/add_review.html')
 
 
-# def add_answer(request,identifier):
-# 	user = users.get_current_user()
-# 	if user:
-# 		a='aaa'
-# 	else:
-# 		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
-
-# 	logging.info("The id is: " + str(user))
-
-# 	if request.method == 'POST':
-# 		items = request.POST
-# 		r = Questions(description=items['review'], title=items['title'], star_rating=0)
-# 		r.createdate = datetime.datetime.now()
-# 		r.author=user
-# 		r.identifier = str(random.getrandbits(32))
-# 		r.put()
-# 		return redirect('/reviews')
-# 	else:
-# 		return render(request, 'questionAnswerSite/add_review.html')
-
 def my_question(request):
 	user = users.get_current_user()
 	if user:
-		a='aaa'
+		logoutLink= users.create_logout_url('/')
 		#return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
 	else:
 		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/myquestions/') })
@@ -165,14 +135,13 @@ def my_question(request):
 
 	
 
-	return render(request, "questionAnswerSite/myquestions.html", {'questions': questions})
+	return render(request, "questionAnswerSite/myquestions.html", {'questions': questions,'logoutLink':logoutLink})
 
 
 def my_answers(request):
 	user = users.get_current_user()
 	if user:
-		a='aaa'
-		#return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
+		a='aa'
 	else:
 		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/myquestions/') })
 
@@ -334,7 +303,8 @@ def add_answer(request,identifier):
 
 		keyVal=str(random.getrandbits(32))
 		r = Answers(key_name=keyVal,parent=question)
-		r.title=items['title']
+		#r.description=convertToHtmlAndImage(items['description'])
+		r.title=convertToHtmlAndImage(items['title'])
 		r.createdate = datetime.datetime.now()
 		r.modifydate= datetime.datetime.now()
 		r.identifier=keyVal
@@ -403,8 +373,6 @@ def list_all_img(request):
 
 	mypictures = db.Query(Pictures)
 	mypictures.filter("author =", user.email())
-	#return render(request, "questionAnswerSite/test.html", {'field1': user.email()})
-	#mypictures = db.GqlQuery("SELECT * FROM Pictures WHERE author = " + user.email())
 	return render(request,'questionAnswerSite/list_img.html', { 'mypictures':mypictures })
 
 
@@ -425,43 +393,26 @@ def delete_img(request,blobKey):
 	return render(request,'questionAnswerSite/list_img.html', { 'mypictures':mypictures })
 
 
-def index(request):
-	context = {}
-	# create a feed generator having a channel with following title, link and description
-	feed = feedgenerator.Rss201rev2Feed(
-		title=u"Runnable",
-		link=u"shaoxinx@gmail.com",
-		description=u"This is final project for open source tool",
-		language=u"en",
-	)
 
-	questions = db.GqlQuery("SELECT * FROM Questions")
-	for question in questions:
-		feed.add_item(
-			title=question.title,
-			description=question.description,
-			createdate=question.createdate,
-			modifydate=question.modifydate
-		)
-	
+
+def per_ans(request,identifier):
+	user = users.get_current_user()
+	if user:
+		a='aaa'
+		#return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
+	else:
+		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/myquestions/') })
 	answers = db.Query(Answers)
-	for answer in answers:
-		feed.add_item(
-			title=question.title,
-			description=answer.description,
-			createdate=answer.createdate,
-			modifydate=answer.modifydate
-		)
+	answers.filter("identifier =", identifier)
+	return render(request,'questionAnswerSite/per_ans.html', { 'answers':answers })
 
-
-	# Write all the feeds in a string
-	str = feed.writeString('utf-8')
-	# You can use following to write the same in a file
-	#with open('test.rss', 'w') as fp:
-	#	feed.write(fp, 'utf-8')
-	
-	# format the string so that it will be readable
-	str = format(str)
-	context['str'] = str
-	
-	return render(request, 'questionAnswerSite/index.html', context)
+def per_quest(request,identifier):
+	user = users.get_current_user()
+	if user:
+		a='aaa'
+		#return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
+	else:
+		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/myquestions/') })
+	myKey = db.Key.from_path('Questions', identifier)
+	question = db.get(myKey)
+	return render(request,'questionAnswerSite/per_question.html', { 'question':question })

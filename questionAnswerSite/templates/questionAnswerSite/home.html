@@ -5,32 +5,35 @@
     <div class="masthead">
     	<div class='container'>
 	    	<h2 class='header-xlg'>
-	    		Welcome to Hotel Reviews.
+	    		Welcome to the Question and Answer final project page.
 	    	</h2>
 	        <h2>
-	        	The best site for hotel reviews worldwide!
 	        </h2>
 	      </div>
     </div>
     <div class='container features'>
-    	<h1 class='header-lg'>Some features we provide.</h1>
+    	<h1 class='header-lg'>Some features I provide.</h1>
     	<div class='row'>
     		<div class='col-lg-4'>
-    			<h2>Lorem ipsum dolor</h2>
+    			<h2>Feature 1</h2>
     			<p class='lead'>
-    				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    				<br>1. Allow multiple users to login and view questions and modify questions.  <br>2. Non login user can view all questions without problem. ->Look Around->All questions.  <br>3. Only show 10 questions on a page, this is done through query. ->Look Around->All questions. <br>4. Answers are sorted by largest difference between up and down.->Look Around ->All questions->click one of the questions, you can see all anwsers for that question. <br>5. you can tag for a question when creating a question. ->Look Around ->All questions->Create link. <br>6. http site is showed in a link format while jpg is showed as a inline picture.  <br>7. you can upload picture with your id. ->Look Around ->My picutres, This is done through blobstore in epp engine.  
     			</p>
     		</div>
     		<div class='col-lg-4'>
-    			<h2>Consectetur adipisicing</h2>
+    			<h2>Feature 2</h2>
     			<p class='lead'>
-    				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+    				<br>8. Each question and answer has a permalink, you can find it through ->Look Around ->All questions->click one of the questions->go to link.  And limited in 500 Char on the home page.
+                    <br>9. Each question and answer timestamps are saved in its permalink, you can find it through ->Look Around ->All questions->click one of the questions->go to link.
+                     <br>10.RSS link is created using Django library.  ->Look Around -> RSS Link.
     			</p>
     		</div>
     		<div class='col-lg-4'>
-    			<h2>Lorem ipsum</h2>
+    			<h2>Additional Feature</h2>
     			<p class='lead'>
-    				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    				<br>Bootstrap User interface.
+                    <br>Allow user to edit questions and answers and pictures.
+                    <br>email can send to admin of the website, detail please look at handle_incoming_email.py.
     			</p>
     		</div>
     	</div>

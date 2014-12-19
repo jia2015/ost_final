@@ -14,6 +14,7 @@
             <p><b>Question:</b> <span class='review'>{{ answer.question_|safe }}</span></p>
             <p><b>Answer:</b> <span class='title'>{{ answer.title|safe }}</span></p>         
             <p><b>Date Created:</b> <span class='date'>{{ answer.createdate }}</span></p>
+             <p><b>Date Modified:</b> <span class='date'>{{ answer.modifydate }}</span></p>
             <p><a href='/modify_answer/{{ answer.identifier }}'>Modify the answer.</a></p>
             <p><a href='/delete_answer/{{ answer.identifier }}'>Delete</a></p>
         </div>

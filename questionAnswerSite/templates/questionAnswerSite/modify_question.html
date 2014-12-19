@@ -8,12 +8,12 @@
 	    	<div class='form-group col-lg-12'>
 	    		<label for="title">Modify Title: </label>
 	    		 <input type="hidden" name="identifier" value="{{ question.identifier }}">
-	    		<input type="text" class="form-control" id="title" name="title" value="{{ question.title }}">
+	    		<input type="text" class="form-control" id="title" name="title" value="{{ question.title|safe }}">
 	  		</div>
 
 	  		<div class='form-group col-lg-12'>
 	  			<label for="title">Modify Description:</label>
-	  			<textarea class="form-control" rows="6" name='description' id='description'>{{question.description }}</textarea>
+	  			<textarea class="form-control" rows="6" name='description' id='description'>{{question.description|safe }}</textarea>
 	  		</div>
 
 	  		<div class='form-group col-lg-12'>

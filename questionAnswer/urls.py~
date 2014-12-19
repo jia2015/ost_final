@@ -39,7 +39,7 @@ urlpatterns = patterns('',
     url(r'^list_all_img/', 'questionAnswerSite.views.list_all_img', name='list_all_img'),
 
 
-    #url(r'^feed/', "questionAnswerSite.views.index", name='index')
+    url(r'^feed/', "questionAnswerSite.views.index", name='index')
 
     #url(r'^admin/', include(admin.site.urls)),
 )

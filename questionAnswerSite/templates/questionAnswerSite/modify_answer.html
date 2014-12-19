@@ -9,7 +9,7 @@
 	    	<div class='form-group col-lg-12'>
 	    		<label for="title">Modify Title: </label>{{ answer.identifier }}
 	    		 <input type="hidden" name="identifier" value="{{ answer.identifier }}">
-	    		<input type="text" class="form-control" id="title" name="title" value="{{ answer.title }}">
+	    		<input type="text" class="form-control" id="title" name="title" value="{{ answer.title|safe }}">
 	  		</div>
 
 	  		<div class='form-group col-lg-12'>

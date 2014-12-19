@@ -3,7 +3,7 @@
 
 {% block content %}
     <div class="jumbotron">
-        {{logoutLink|safe}} 
+        {{logoutLink|safe}}  <a href='/feed/'>RSS Feed</a>
         <h2>
         	Check out our amazing reviews!
         </h2>
