@@ -32,9 +32,8 @@
 
     	{% for question in questions %}
          <div class='col-lg-12 review-node jumbotron'>
-            <p><a href='/review/{{ question.identifier }}'>{{ question.title }}  </a></p>
+            <p><a href='/review/{{ question.identifier }}'>{{ question.title|safe }}  </a></p>
             ---{{ question.author }}.  {{ question.modifydate }}
-            <br><a href='/answer/{{ question.identifier }}'>Answer</a>
         </div>
 	   {% endfor %}
     </div>

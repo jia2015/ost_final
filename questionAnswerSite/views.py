@@ -33,6 +33,8 @@ def convertToHtmlAndImage(input):
 	try:
 		output= re.compile(r'(http(s)?://\S*[^(.jpg)(.png)(.gif)](\s|$))').sub(r'<a href="\1">\1</a>',input)
 		output=re.compile(r'(http://\S*[(.jpg)(.png)(.gif)](\s|$))').sub(r'<img src="\1" style="width:304px;height:228px">', output)
+		#output=re.compile(r'(http://\S*(upload/serve)\S*)(\s|$))').sub(r'<img src="\1" style="width:304px;height:228px">', output)
+
 	except:
 		return input
 	return output
@@ -46,23 +48,17 @@ def question(request, identifier):
 	# answers = answers_gb.ancestor(question)
 
 
-	# question.description=convertToHtmlAndImage(question.description)
-	# question.title=convertToHtmlAndImage(question.title)
+	question.description=convertToHtmlAndImage(question.description)
+	question.title=convertToHtmlAndImage(question.title)
 
-	# for ans in answers:
-	# 	ans.title=convertToHtmlAndImage(ans.title)
-	# 	ans.description=convertToHtmlAndImage(ans.description)
-	# 	ans.put()
-	
-	# answers_gb = Answers.all()
-	# answers = answers_gb.ancestor(question)
+	#return render(request, "questionAnswerSite/test.html", {'field1': question.description})
+
 
 	answers = db.GqlQuery("SELECT * FROM Answers ORDER BY votes DESC")
 
 	for ans in answers:
 		ans.title=convertToHtmlAndImage(ans.title)
 		ans.description=convertToHtmlAndImage(ans.description)
-		ans.put()
 
 	return render(request, "questionAnswerSite/review.html", {'question': question,'answers':answers})
 
@@ -112,8 +108,10 @@ def add_review(request):
 		keyVal=str(random.getrandbits(32))
 		r = Questions(key_name=keyVal)
 		#r = Questions(description=items['review'], title=items['title'], star_rating=0)
-		r.title=items['title']
-		r.description=items['description']
+
+		r.description=convertToHtmlAndImage(items['description'])
+		r.title=convertToHtmlAndImage(items['title'])
+
 		r.createdate = datetime.datetime.now()
 		r.modifydate= datetime.datetime.now()
 		r.identifier=keyVal
@@ -131,26 +129,6 @@ def add_review(request):
 	else:
 		return render(request, 'questionAnswerSite/add_review.html')
 
-
-# def add_answer(request,identifier):
-# 	user = users.get_current_user()
-# 	if user:
-# 		a='aaa'
-# 	else:
-# 		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
-
-# 	logging.info("The id is: " + str(user))
-
-# 	if request.method == 'POST':
-# 		items = request.POST
-# 		r = Questions(description=items['review'], title=items['title'], star_rating=0)
-# 		r.createdate = datetime.datetime.now()
-# 		r.author=user
-# 		r.identifier = str(random.getrandbits(32))
-# 		r.put()
-# 		return redirect('/reviews')
-# 	else:
-# 		return render(request, 'questionAnswerSite/add_review.html')
 
 def my_question(request):
 	user = users.get_current_user()
@@ -334,7 +312,8 @@ def add_answer(request,identifier):
 
 		keyVal=str(random.getrandbits(32))
 		r = Answers(key_name=keyVal,parent=question)
-		r.title=items['title']
+		#r.description=convertToHtmlAndImage(items['description'])
+		r.title=convertToHtmlAndImage(items['title'])
 		r.createdate = datetime.datetime.now()
 		r.modifydate= datetime.datetime.now()
 		r.identifier=keyVal
@@ -465,3 +444,27 @@ def index(request):
 	context['str'] = str
 	
 	return render(request, 'questionAnswerSite/index.html', context)
+
+
+
+def per_ans(request,identifier):
+	user = users.get_current_user()
+	if user:
+		a='aaa'
+		#return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
+	else:
+		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/myquestions/') })
+	answers = db.Query(Answers)
+	answers.filter("identifier =", identifier)
+	return render(request,'questionAnswerSite/per_ans.html', { 'answers':answers })
+
+def per_quest(request,identifier):
+	user = users.get_current_user()
+	if user:
+		a='aaa'
+		#return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/reviews/') })
+	else:
+		return render(request,'login.html', { 'user':user, 'google_url': users.create_login_url('/myquestions/') })
+	myKey = db.Key.from_path('Questions', identifier)
+	question = db.get(myKey)
+	return render(request,'questionAnswerSite/per_question.html', { 'question':question })

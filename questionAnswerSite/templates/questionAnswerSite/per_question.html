@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    	{% csrf_token %}
+    	<div class='container-fluid'>
+	    	<div class='form-group col-lg-12'>
+	    		<label for="title">Title: {{ question.title|safe }}</label>
+	  		</div>
+
+	  		<div class='form-group col-lg-12'>
+	  			<label for="title">Description: {{question.description|safe }}</label>
+	  		</div>
+
+	  		<div class='form-group col-lg-12'>
+	  			<label for="title">Vote: {{question.votes }}</label>
+	  		</div>
+
+	  		<div class='form-group col-lg-12'>
+	  			<label for="title">Author: {{question.createdate }}</label>
+	  		</div>
+
+	  		<div class='form-group col-lg-12'>
+	  			<label for="title">Author: {{question.modifydate }}</label>
+	  		</div>
+
+	    	<div class='form-group col-lg-12'>
+	  			<p><a href='/reviews'>Home</a></p>
+	  		</div>
+	  	</div>
+{% endblock content %}

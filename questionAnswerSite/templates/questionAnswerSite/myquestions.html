@@ -14,8 +14,9 @@
             <p><b>Title:</b> <span class='title'>{{ question.title|safe }}</span></p>
             <p><b>Question:</b> <span class='review'>{{ question.description|safe }}</span></p>
             <p><b>Date Created:</b> <span class='date'>{{ question.createdate }}</span></p>
+            <p><b>Date Modified:</b> <span class='date'>{{ question.modifydate }}</span></p>
             <p><a href='/modify_question/{{ question.identifier }}'>Modify the question.</a></p>
-            <p><a href='/delete_question/{{ question.identifier }}'>Delete {{ question.identifier }}</a></p>
+            <p><a href='/delete_question/{{ question.identifier }}'>Delete</a></p>
         </div>
 	   {% endfor %}
     </div>
